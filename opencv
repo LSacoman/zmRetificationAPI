@@ -1,0 +1,45 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import sys
+from PIL import Image
+import cv2
+
+FileName = sys.argv[1]
+
+arq = open('./' = FileName, 'w')
+
+x = np.random.random((5, 5))
+teste = []
+
+for x in X:
+  for y in x :
+      teste.append(str(y) + ',')
+
+arq.writelines(teste)
+arq.close()
+img = Image.fromarray(X, '1')
+img.save('teste1.png')
+
+plt.imshow(X, cmap="gray")
+
+img = cv2.imread('nova.jpeg', 0)
+median = cv2.medianBlur(img, 11)
+
+retangularKernel = cv.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+ellipticalKernel = cv.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+crossShapedKernel = cv.getStructuringElement(cv2.MORPH_CROSS, (5, 5))
+
+kernel = np.ones((5, 5), np.uint8)
+erosion = cv2.erode(img, kernel, iterations = 1)
+dilation = cv2.dilate(img, kernel, iterations = 1)
+
+opening = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
+
+closing = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+
+img = closing 
+
+cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+cv2.imShow('image', img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
