@@ -63,13 +63,17 @@ module.exports.arrayToImage = async (req, res) => {
 
   console.log(retorno)
 
-  // const cmd = 'sudo comando1';
+  const cmd = 'sudo python3 teste.py ' + retorno
 
-  // exec(cmd, {
-  //   cwd: __dirname
-  // }, (err, stdout, stderr) => {
-  //   console.log(stdout);
-  //   if (err) console.log(err);
-  //   else runCommand(cmds, cb);
-  // });
+  exec(
+    cmd,
+    {
+      cwd: __dirname
+    },
+    (err, stdout, stderr) => {
+      console.log(stdout)
+      if (err) console.log(err)
+      else runCommand(cmds, cb)
+    }
+  )
 }
