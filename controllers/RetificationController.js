@@ -61,19 +61,28 @@ module.exports.arrayToImage = async (req, res) => {
     retorno += i == matrix.numRows - 1 ? '' : '-'
   }
 
-  console.log(retorno)
+  const processScriptReturn = (values) => {
+	rows = values.split('][')
+    for(let i = 0; i < rows.length; i++){
+		rows[i] = rows[i].replace('[','');
+		rows[i] = rows[i].replace(']','');
+		console.log(rows[i])
+	}
+  }
+
 
   const cmd = 'sudo python3 teste.py ' + retorno
-
   exec(
     cmd,
     {
       cwd: __dirname
     },
     (err, stdout, stderr) => {
-      console.log(stdout)
-      if (err) console.log(err)
-      else runCommand(cmds, cb)
+		if (err) console.log(err)
+		console.log(stdout)
+		processScriptReturn(stdout)
     }
   )
+  
+
 }
