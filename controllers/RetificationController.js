@@ -52,7 +52,6 @@ module.exports.arrayToImage = async (req, res) => {
       }
     }
   }
-
   let retorno = ''
   for (let i = 0; i < matrix.numRows; i++) {
     let teste = i.toString()
@@ -60,16 +59,19 @@ module.exports.arrayToImage = async (req, res) => {
     retorno += element
     retorno += i == matrix.numRows - 1 ? '' : '-'
   }
-
-  const processScriptReturn = (values) => {
-	rows = values.split('][')
-    for(let i = 0; i < rows.length; i++){
-		rows[i] = rows[i].replace('[','');
-		rows[i] = rows[i].replace(']','');
-		console.log(rows[i])
-	}
+  var matrixRetorno = Matrix({ rows: latitudesLength, columns: longitudesLength })
+  const processScriptReturn = (values, matrixRetorno) => {
+    rows = values.split('][')
+    for (let i = 0; i < rows.length; i++) {
+      rows[i] = rows[i].replace('[', '')
+      rows[i] = rows[i].replace(']', '')
+      cols = rows[i].split(',')
+      for (let j = 0; j < cols.length; j++) {
+        matrixRetorno[i][j] = parseInt(cols[j])
+      }
+    }
   }
-
+  //[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 3, 3, 3, 0, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 3, 3, 0, 0 ][ 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 4, 4, 4, 4, 4, 0, 0 ][ 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 4, 4, 4, 4, 0, 0 ][ 0, 0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 4, 4, 4, 0, 0 ][ 0, 0, 0, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 4, 4, 0, 0 ][ 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 4, 4, 0, 0, 0 ][ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 4, 4, 4, 0, 0, 0 ][ 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 
   const cmd = 'sudo python3 teste.py ' + retorno
   exec(
@@ -78,11 +80,9 @@ module.exports.arrayToImage = async (req, res) => {
       cwd: __dirname
     },
     (err, stdout, stderr) => {
-		if (err) console.log(err)
-		console.log(stdout)
-		processScriptReturn(stdout)
+      if (err) console.log(err)
+      if (stderr) console.log(stderr)
+      processScriptReturn(stdout, matrixRetorno)
     }
   )
-  
-
 }
