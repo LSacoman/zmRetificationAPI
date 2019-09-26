@@ -8,8 +8,13 @@ module.exports.arrayToImage = async (req, res) => {
     return self.indexOf(value) === index
   }
 
+  method = req.body.method
+  kernelSize = req.body.kernelSize
+  kernelFormat = req.body.kernelFormat
+  iterations = req.body.iterations
   data = req.body.zmData
   dataArray = []
+
   rows = data.split(';')
   rows.forEach(row => {
     properties = row.split(',')
@@ -70,21 +75,21 @@ module.exports.arrayToImage = async (req, res) => {
         matrixRetorno[i][j] = parseInt(cols[j])
       }
     }
-	  for (let lat = 0; lat < latitudesLength; lat++) {
-		for (let long = 0; long < longitudesLength; long++) {
-		  for (let index = 0; index < dataArray.length; index++) {
-			const element = dataArray[index]
-			if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
-			  dataArray[index].c5 = matrixRetorno[lat][long]
-			}
-		  }
-		}
-	  }
-	  return ReS(res, dataArray, 200)
+    for (let lat = 0; lat < latitudesLength; lat++) {
+      for (let long = 0; long < longitudesLength; long++) {
+        for (let index = 0; index < dataArray.length; index++) {
+          const element = dataArray[index]
+          if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
+            dataArray[index].c5 = matrixRetorno[lat][long]
+          }
+        }
+      }
+    }
+    return ReS(res, dataArray, 200)
   }
   //[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 3, 3, 3, 0, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 3, 3, 0, 0 ][ 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 4, 4, 4, 4, 4, 0, 0 ][ 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 4, 4, 4, 4, 0, 0 ][ 0, 0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 4, 4, 4, 0, 0 ][ 0, 0, 0, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 4, 4, 0, 0 ][ 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 4, 4, 0, 0, 0 ][ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 4, 4, 4, 0, 0, 0 ][ 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 
-  const cmd = 'sudo python3 teste.py ' + retorno
+  const cmd = 'sudo python3 retify.py ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + retorno
   exec(
     cmd,
     {
