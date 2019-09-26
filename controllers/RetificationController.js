@@ -80,7 +80,7 @@ module.exports.arrayToImage = async (req, res) => {
         for (let index = 0; index < dataArray.length; index++) {
           const element = dataArray[index]
           if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
-            dataArray[index].c5 = matrixRetorno[lat][long]
+            dataArray[index].c5 = Math.round(matrixRetorno[lat][long] / 50)
           }
         }
       }
@@ -96,8 +96,8 @@ module.exports.arrayToImage = async (req, res) => {
       cwd: __dirname
     },
     (err, stdout, stderr) => {
-      if (err) console.log(err)
-      if (stderr) console.log(stderr)
+      if (err) ReE(res, err, 500)
+      if (stderr) ReE(res, stderr, 500)
       processScriptReturn(stdout, matrixRetorno)
     }
   )
