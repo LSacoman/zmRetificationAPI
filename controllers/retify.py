@@ -43,14 +43,14 @@ if method == 'openandclose':
 	resultc = cv2.dilate(resultb, kernel, iterations = int(iterations))
 	result = cv2.erode(resultc, kernel, iterations = int(iterations))	
 
-cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
-cv2.imshow('Imagem Original', data2)
+#cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
+#cv2.imshow('Imagem Original', data2)
 cv2.imwrite('original.png', data2)
-cv2.namedWindow('Imagem Retificada', cv2.WINDOW_NORMAL)
-cv2.imshow('Imagem Retificada', result)
+#cv2.namedWindow('Imagem Retificada', cv2.WINDOW_NORMAL)
+#cv2.imshow('Imagem Retificada', result)
 cv2.imwrite('retificada.png', result)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
 
 
 retorno = list(np.asarray(result))
