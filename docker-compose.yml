@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  # Container portainer
+  portainer:
+    image: portainer/portainer
+    container_name: 'portainerApp'
+    stdin_open: true
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainerdata:/data
+    restart: always
+
+  # TCC server API
+  tccapi:
+    build:
+      context: ./
+      dockerfile: dockerfile
+    container_name: tccapi
+    working_dir: /home/node/app/tcc
+    stdin_open: true
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - tccapidata:/home/node/app
+    ports:
+      - '5000:3000'
+    command: 'npm start'
+    restart: always
+
+volumes:
+  tccapidata:
+  portainerdata:
