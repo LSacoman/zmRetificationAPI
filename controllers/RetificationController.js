@@ -45,27 +45,38 @@ module.exports.arrayToImage = async (req, res) => {
   const latitudesLength = distinctLatitudes.length
   const longitudesLength = distinctLongitudes.length
 
-  var matrix = Matrix({ rows: latitudesLength, columns: longitudesLength })
+  let matrixC2 = Matrix({ rows: latitudesLength, columns: longitudesLength })
+  let matrixC3 = Matrix({ rows: latitudesLength, columns: longitudesLength })
+  let matrixC4 = Matrix({ rows: latitudesLength, columns: longitudesLength })
+  let matrixC5 = Matrix({ rows: latitudesLength, columns: longitudesLength })
 
   for (let lat = 0; lat < latitudesLength; lat++) {
     for (let long = 0; long < longitudesLength; long++) {
       for (let index = 0; index < dataArray.length; index++) {
         const element = dataArray[index]
         if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
-          matrix[lat][long] = parseInt(element.c5)
+          matrixC2[lat][long] = parseInt(element.c2)
+          matrixC3[lat][long] = parseInt(element.c3)
+          matrixC4[lat][long] = parseInt(element.c4)
+          matrixC5[lat][long] = parseInt(element.c5)
         }
       }
     }
   }
-  let retorno = ''
-  for (let i = 0; i < matrix.numRows; i++) {
-    let teste = i.toString()
-    const element = matrix[teste]
-    retorno += element
-    retorno += i == matrix.numRows - 1 ? '' : '-'
+
+  const matrixToString = mat => {
+    let retorno = ''
+    for (let i = 0; i < mat.numRows; i++) {
+      let teste = i.toString()
+      const element = mat[teste]
+      retorno += element
+      retorno += i == mat.numRows - 1 ? '' : '-'
+    }
+    return retorno
   }
-  var matrixRetorno = Matrix({ rows: latitudesLength, columns: longitudesLength })
-  const processScriptReturn = (values, matrixRetorno) => {
+
+  const processScriptReturn = values => {
+    let matrixRetorno = Matrix({ rows: latitudesLength, columns: longitudesLength })
     rows = values.split('][')
     for (let i = 0; i < rows.length; i++) {
       rows[i] = rows[i].replace('[', '')
@@ -75,30 +86,37 @@ module.exports.arrayToImage = async (req, res) => {
         matrixRetorno[i][j] = parseInt(cols[j])
       }
     }
-    for (let lat = 0; lat < latitudesLength; lat++) {
-      for (let long = 0; long < longitudesLength; long++) {
-        for (let index = 0; index < dataArray.length; index++) {
-          const element = dataArray[index]
-          if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
-            dataArray[index].c5 = Math.round(matrixRetorno[lat][long] / 50)
-          }
+    return matrixRetorno
+  }
+
+  const execCommand = (method, kernelSize, kernelFormat, iterations, retorno) => {
+    return Promise(resolve => {
+      const cmd = 'sudo python3 retify.py ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + retorno
+      const { stdout, stderr } = exec(cmd, {
+        cwd: __dirname
+      })
+    })
+  }
+
+  const [out2, out3, out4, out5] = await Promise.all([execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC2)), execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC3)), execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC4)), execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC5))])
+
+  matrixRetornoC2 = processScriptReturn(out2)
+  matrixRetornoC3 = processScriptReturn(out3)
+  matrixRetornoC4 = processScriptReturn(out4)
+  matrixRetornoC5 = processScriptReturn(out5)
+
+  for (let lat = 0; lat < latitudesLength; lat++) {
+    for (let long = 0; long < longitudesLength; long++) {
+      for (let index = 0; index < dataArray.length; index++) {
+        const element = dataArray[index]
+        if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
+          dataArray[index].c2 = Math.round(matrixRetornoC2[lat][long] / 50)
+          dataArray[index].c3 = Math.round(matrixRetornoC3[lat][long] / 50)
+          dataArray[index].c4 = Math.round(matrixRetornoC4[lat][long] / 50)
+          dataArray[index].c5 = Math.round(matrixRetornoC5[lat][long] / 50)
         }
       }
     }
-    return ReS(res, dataArray, 200)
   }
-  //[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 3, 3, 3, 0, 0 ][ 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 3, 3, 0, 0 ][ 0, 0, 0, 0, 0, 0, 0, 5, 5, 5, 4, 4, 4, 4, 4, 0, 0 ][ 0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 4, 4, 4, 4, 0, 0 ][ 0, 0, 0, 0, 0, 2, 2, 2, 2, 5, 5, 5, 4, 4, 4, 0, 0 ][ 0, 0, 0, 2, 2, 2, 2, 2, 2, 5, 5, 5, 5, 4, 4, 0, 0 ][ 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 5, 5, 4, 4, 0, 0, 0 ][ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5, 4, 4, 4, 0, 0, 0 ][ 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
-
-  const cmd = 'sudo python3 retify.py ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + retorno
-  exec(
-    cmd,
-    {
-      cwd: __dirname
-    },
-    (err, stdout, stderr) => {
-      if (err) ReE(res, err, 500)
-      if (stderr) ReE(res, stderr, 500)
-      processScriptReturn(stdout, matrixRetorno)
-    }
-  )
+  return ReS(res, dataArray, 200)
 }
