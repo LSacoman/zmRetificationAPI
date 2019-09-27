@@ -8,6 +8,17 @@ module.exports.arrayToImage = async (req, res) => {
     return self.indexOf(value) === index
   }
 
+  const matrixToString = mat => {
+    let result = ''
+    for (let i = 0; i < mat.numRows; i++) {
+      let position = i.toString()
+      const element = mat[position]
+      result += element
+      result += i == mat.numRows - 1 ? '' : '-'
+    }
+    return result
+  }
+
   method = req.body.method
   kernelSize = req.body.kernelSize
   kernelFormat = req.body.kernelFormat
@@ -50,6 +61,7 @@ module.exports.arrayToImage = async (req, res) => {
   let matrixC4 = Matrix({ rows: latitudesLength, columns: longitudesLength })
   let matrixC5 = Matrix({ rows: latitudesLength, columns: longitudesLength })
 
+  // Popula as Matrizes com os valores corretos nas posicoes corretas
   for (let lat = 0; lat < latitudesLength; lat++) {
     for (let long = 0; long < longitudesLength; long++) {
       for (let index = 0; index < dataArray.length; index++) {
@@ -64,18 +76,8 @@ module.exports.arrayToImage = async (req, res) => {
     }
   }
 
-  const matrixToString = mat => {
-    let retorno = ''
-    for (let i = 0; i < mat.numRows; i++) {
-      let teste = i.toString()
-      const element = mat[teste]
-      retorno += element
-      retorno += i == mat.numRows - 1 ? '' : '-'
-    }
-    return retorno
-  }
-
-  const processScriptReturn = values => {
+  // processa os dados que retornam do script de retificacao
+  const processReturnDataFromScript = values => {
     let matrixRetorno = Matrix({ rows: latitudesLength, columns: longitudesLength })
     rows = values.split('][')
     for (let i = 0; i < rows.length; i++) {
@@ -89,9 +91,9 @@ module.exports.arrayToImage = async (req, res) => {
     return matrixRetorno
   }
 
-  const execCommand = (method, kernelSize, kernelFormat, iterations, retorno) => {
+  const execCommand = (id, method, kernelSize, kernelFormat, iterations, stringData) => {
     return new Promise(resolve => {
-      const cmd = 'sudo python3 retify.py ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + retorno
+      const cmd = 'sudo python3 retify.py ' + id + ' ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + stringData
 
       exec(
         cmd,
@@ -105,18 +107,19 @@ module.exports.arrayToImage = async (req, res) => {
     })
   }
 
-  const [out2, out3, out4, out5] = await Promise.all([execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC2)), execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC3)), execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC4)), execCommand(method, kernelSize, kernelFormat, iterations, matrixToString(matrixC5))])
+  const [out2, out3, out4, out5] = await Promise.all([
+    execCommand('c2', method, kernelSize, kernelFormat, iterations, matrixToString(matrixC2)),
+    execCommand('c3', method, kernelSize, kernelFormat, iterations, matrixToString(matrixC3)),
+    execCommand('c4', method, kernelSize, kernelFormat, iterations, matrixToString(matrixC4)),
+    execCommand('c5', method, kernelSize, kernelFormat, iterations, matrixToString(matrixC5))
+  ])
 
-  matrixRetornoC2 = processScriptReturn(out2)
-  matrixRetornoC3 = processScriptReturn(out3)
-  matrixRetornoC4 = processScriptReturn(out4)
-  matrixRetornoC5 = processScriptReturn(out5)
+  matrixRetornoC2 = processReturnDataFromScript(out2)
+  matrixRetornoC3 = processReturnDataFromScript(out3)
+  matrixRetornoC4 = processReturnDataFromScript(out4)
+  matrixRetornoC5 = processReturnDataFromScript(out5)
 
-  console.log('Matrix 1', matrixRetornoC2)
-  console.log('Matrix 2', matrixRetornoC3)
-  console.log('Matrix 3', matrixRetornoC4)
-  console.log('Matrix 4', matrixRetornoC5)
-
+  // popula o objeto com as informações das ZMs retificadas
   for (let lat = 0; lat < latitudesLength; lat++) {
     for (let long = 0; long < longitudesLength; long++) {
       for (let index = 0; index < dataArray.length; index++) {

@@ -4,11 +4,12 @@ import cv2
 
 #const cmd = 'sudo python3 retify.py ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + retorno
 formatedData = []
-method = sys.argv[1]
-kernelSize = sys.argv[2]
-kernelFormat = sys.argv[3]
-iterations = sys.argv[4]
-dataArg = sys.argv[5]
+identifier = sys.argv[1]
+method = sys.argv[2]
+kernelSize = sys.argv[3]
+kernelFormat = sys.argv[4]
+iterations = sys.argv[5]
+dataArg = sys.argv[6]
 
 dataRows = dataArg.split('-')
 for row in dataRows:
@@ -45,10 +46,10 @@ if method == 'openandclose':
 
 #cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
 #cv2.imshow('Imagem Original', data2)
-cv2.imwrite('original.png', data2)
+cv2.imwrite('original' + identifier + '.png', data2)
 #cv2.namedWindow('Imagem Retificada', cv2.WINDOW_NORMAL)
 #cv2.imshow('Imagem Retificada', result)
-cv2.imwrite('retificada.png', result)
+cv2.imwrite('retificada' + identifier + '.png', result)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
 
