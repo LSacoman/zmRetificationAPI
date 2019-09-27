@@ -90,11 +90,18 @@ module.exports.arrayToImage = async (req, res) => {
   }
 
   const execCommand = (method, kernelSize, kernelFormat, iterations, retorno) => {
-    return Promise(resolve => {
+    return new Promise(resolve => {
       const cmd = 'sudo python3 retify.py ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + retorno
-      const { stdout, stderr } = exec(cmd, {
-        cwd: __dirname
-      })
+
+      exec(
+        cmd,
+        {
+          cwd: __dirname
+        },
+        (err, stdout, stderr) => {
+          resolve(stdout)
+        }
+      )
     })
   }
 
@@ -104,6 +111,11 @@ module.exports.arrayToImage = async (req, res) => {
   matrixRetornoC3 = processScriptReturn(out3)
   matrixRetornoC4 = processScriptReturn(out4)
   matrixRetornoC5 = processScriptReturn(out5)
+
+  console.log('Matrix 1', matrixRetornoC2)
+  console.log('Matrix 2', matrixRetornoC3)
+  console.log('Matrix 3', matrixRetornoC4)
+  console.log('Matrix 4', matrixRetornoC5)
 
   for (let lat = 0; lat < latitudesLength; lat++) {
     for (let long = 0; long < longitudesLength; long++) {
