@@ -1,4 +1,9 @@
-const { to, ReE, ReS } = require('../services/util.service')
+const {
+  to,
+  ReE,
+  ReS
+} = require('../services/util.service')
+const os = require('os');
 
 const Matrix = require('node-matrix')
 var exec = require('child_process').exec
@@ -27,8 +32,8 @@ module.exports.arrayToImage = async (req, res) => {
   dataFormat = req.body.zmDataFormat
   dataArray = []
 
-  rows = (zmDataFormat == 'string') ? data.split(';') : data.split('\n') 
-  
+  rows = (zmDataFormat == 'string') ? data.split(';') : data.split('\n')
+
   rows.forEach(row => {
     properties = row.split(',')
     rowObject = {
@@ -58,10 +63,22 @@ module.exports.arrayToImage = async (req, res) => {
   const latitudesLength = distinctLatitudes.length
   const longitudesLength = distinctLongitudes.length
 
-  let matrixC2 = Matrix({ rows: latitudesLength, columns: longitudesLength })
-  let matrixC3 = Matrix({ rows: latitudesLength, columns: longitudesLength })
-  let matrixC4 = Matrix({ rows: latitudesLength, columns: longitudesLength })
-  let matrixC5 = Matrix({ rows: latitudesLength, columns: longitudesLength })
+  let matrixC2 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
+  let matrixC3 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
+  let matrixC4 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
+  let matrixC5 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
 
   // Popula as Matrizes com os valores corretos nas posicoes corretas
   for (let lat = 0; lat < latitudesLength; lat++) {
@@ -80,7 +97,10 @@ module.exports.arrayToImage = async (req, res) => {
 
   // processa os dados que retornam do script de retificacao
   const processReturnDataFromScript = values => {
-    let matrixRetorno = Matrix({ rows: latitudesLength, columns: longitudesLength })
+    let matrixRetorno = Matrix({
+      rows: latitudesLength,
+      columns: longitudesLength
+    })
     rows = values.split('][')
     for (let i = 0; i < rows.length; i++) {
       rows[i] = rows[i].replace('[', '')
@@ -98,8 +118,7 @@ module.exports.arrayToImage = async (req, res) => {
       const cmd = 'sudo python3 retify.py ' + id + ' ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + stringData
 
       exec(
-        cmd,
-        {
+        cmd, {
           cwd: __dirname
         },
         (err, stdout, stderr) => {
@@ -135,5 +154,16 @@ module.exports.arrayToImage = async (req, res) => {
       }
     }
   }
+
+  const objectToString = (objects) => {
+    let csv = ''
+    objects.forEach(object => {
+      csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5}\n`
+    });
+    res.setHeader('Content-disposition', 'attachment; filename=testing.csv');
+    res.set('Content-Type', 'text/csv');
+    res.status(200).send(csv);
+  }
+  if (dataFormat == "csv") objectToString(dataArray);
   return ReS(res, dataArray, 200)
 }
