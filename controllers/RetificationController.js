@@ -1,9 +1,5 @@
-const {
-  to,
-  ReE,
-  ReS
-} = require('../services/util.service')
-const os = require('os');
+const { to, ReE, ReS } = require('../services/util.service')
+const os = require('os')
 
 const Matrix = require('node-matrix')
 var exec = require('child_process').exec
@@ -32,7 +28,7 @@ module.exports.arrayToImage = async (req, res) => {
   zmDataFormat = req.body.zmDataFormat
   dataArray = []
 
-  rows = (zmDataFormat == 'string') ? data.split(';') : data.split('\n')
+  rows = zmDataFormat == 'string' ? data.split(';') : data.split('\n')
 
   rows.forEach(row => {
     properties = row.split(',')
@@ -118,7 +114,8 @@ module.exports.arrayToImage = async (req, res) => {
       const cmd = 'sudo python3 retify.py ' + id + ' ' + method.toString() + ' ' + kernelSize.toString() + ' ' + kernelFormat.toString() + ' ' + iterations.toString() + ' ' + stringData
 
       exec(
-        cmd, {
+        cmd,
+        {
           cwd: __dirname
         },
         (err, stdout, stderr) => {
@@ -155,15 +152,18 @@ module.exports.arrayToImage = async (req, res) => {
     }
   }
 
-  const objectToString = (objects) => {
+  const objectToString = objects => {
     let csv = ''
     objects.forEach(object => {
       csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5}\n`
-    });
-    res.setHeader('Content-disposition', 'attachment; filename=testing.csv');
-    res.set('Content-Type', 'text/csv');
-    res.status(200).send(csv);
+    })
+    res.setHeader('Content-disposition', 'attachment; filename=testing.csv')
+    res.set('Content-Type', 'text/csv')
+    return res.status(200).send(csv)
   }
-  if (zmDataFormat == "csv") objectToString(dataArray);
-  return ReS(res, dataArray, 200)
+  if (zmDataFormat == 'csv') {
+    objectToString(dataArray)
+  } else {
+    return ReS(res, dataArray, 200)
+  }
 }
