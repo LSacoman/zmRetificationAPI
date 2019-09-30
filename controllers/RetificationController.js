@@ -29,7 +29,7 @@ module.exports.arrayToImage = async (req, res) => {
   kernelFormat = req.body.kernelFormat
   iterations = req.body.iterations
   data = req.body.zmData
-  dataFormat = req.body.zmDataFormat
+  zmDataFormat = req.body.zmDataFormat
   dataArray = []
 
   rows = (zmDataFormat == 'string') ? data.split(';') : data.split('\n')
@@ -164,6 +164,6 @@ module.exports.arrayToImage = async (req, res) => {
     res.set('Content-Type', 'text/csv');
     res.status(200).send(csv);
   }
-  if (dataFormat == "csv") objectToString(dataArray);
+  if (zmDataFormat == "csv") objectToString(dataArray);
   return ReS(res, dataArray, 200)
 }
