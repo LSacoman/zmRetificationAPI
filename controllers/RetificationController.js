@@ -154,9 +154,11 @@ module.exports.arrayToImage = async (req, res) => {
 
   const objectToString = objects => {
     let csv = ''
-    objects.forEach(object => {
-      csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5}\n`
-    })
+    for (let index = 0; index < objects.length; index++) {
+      const object = objects[index]
+      csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5} \n`
+      console.log(csv)
+    }
     res.setHeader('Content-disposition', 'attachment; filename=testing.csv')
     res.set('Content-Type', 'text/csv')
     return res.status(200).send(csv)
