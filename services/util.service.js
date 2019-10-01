@@ -25,10 +25,10 @@ module.exports.ReS = function(res, data, code) {
   return res.json(send_data)
 }
 
-module.exports.SendCSV = (res, object) => {
+module.exports.SendCSV = (res, objects) => {
   let csv = ''
-  for (let index = 0; index < object.length; index++) {
-    const object = object[index]
+  for (let index = 0; index < objects.length; index++) {
+    const object = objects[index]
     csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5}\n`
   }
   res.setHeader('Content-disposition', 'attachment; filename=testing.csv')
