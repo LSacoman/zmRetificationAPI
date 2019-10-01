@@ -55,8 +55,19 @@ module.exports.retify = async (req, res) => {
   const latitudesLength = distinctLatitudes.length
   const longitudesLength = distinctLongitudes.length
 
-  let matrixC2, matrixC3, matrixC4, matrixC5
-  matrixC2 = matrixC3 = matrixC4 = matrixC5 = Matrix({
+  let matrixC2 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
+  let matrixC3 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
+  let matrixC4 = Matrix({
+    rows: latitudesLength,
+    columns: longitudesLength
+  })
+  let matrixC5 = Matrix({
     rows: latitudesLength,
     columns: longitudesLength
   })
