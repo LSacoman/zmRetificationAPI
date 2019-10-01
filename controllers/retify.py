@@ -46,10 +46,10 @@ if method == 'openandclose':
 
 #cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
 #cv2.imshow('Imagem Original', data2)
-cv2.imwrite('original' + identifier + '.png', data2)
+cv2.imwrite('../public/original' + identifier + '.png', data2)
 #cv2.namedWindow('Imagem Retificada', cv2.WINDOW_NORMAL)
 #cv2.imshow('Imagem Retificada', result)
-cv2.imwrite('retificada' + identifier + '.png', result)
+cv2.imwrite('../public/retificada' + identifier + '.png', result)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
 

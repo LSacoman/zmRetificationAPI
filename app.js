@@ -3,6 +3,8 @@ const logger = require('morgan')
 const bodyParser = require('body-parser')
 const pe = require('parse-error')
 const cors = require('cors')
+const path = require('path')
+const serveStatic = require('serve-static')
 
 const v1 = require('./routes/v1')
 const app = express()
@@ -19,14 +21,13 @@ app.use(
 )
 
 console.log('Environment:', CONFIG.app)
-
 app.use(cors())
-console.log('teste')
+app.use('/static', serveStatic(path.join(__dirname, 'public')))
 app.use('/', v1)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  console.log('teste')
   var err = new Error('Not Found')
   err.status = 404
   next(err)
