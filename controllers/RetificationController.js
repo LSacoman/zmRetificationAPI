@@ -1,10 +1,11 @@
 const { to, ReE, ReS } = require('../services/util.service')
 const os = require('os')
+var path = require('path')
 
 const Matrix = require('node-matrix')
 var exec = require('child_process').exec
 
-module.exports.arrayToImage = async (req, res) => {
+module.exports.retify = async (req, res) => {
   const distinct = (value, index, self) => {
     return self.indexOf(value) === index
   }
@@ -24,25 +25,43 @@ module.exports.arrayToImage = async (req, res) => {
   kernelSize = req.body.kernelSize
   kernelFormat = req.body.kernelFormat
   iterations = req.body.iterations
-  data = req.body.zmData
-  zmDataFormat = req.body.zmDataFormat
+  data = req.body.dataset
+  datasetFormat = req.body.datasetFormat
+  outputFormat = req.body.outputFormat
   dataArray = []
 
-  rows = zmDataFormat == 'string' ? data.split(';') : data.split('\n')
+  if (datasetFormat == 'object') {
+    var objects = JSON.parse(data)
+    objects.forEach((object, index) => {
+      rowObject = {
+        latitude: object.coordinates[0],
+        longitude: object.coordinates[1],
+        ponto: index,
+        c2: object.data,
+        c3: object.data2 != null ? object.data2 : 0,
+        c4: object.data3 != null ? object.data3 : 0,
+        c5: object.data4 != null ? object.data4 : 0
+      }
+      dataArray.push(rowObject)
+    })
+  } else {
+    rows = datasetFormat == 'string' ? data.split(';') : data.split('\n')
 
-  rows.forEach(row => {
-    properties = row.split(',')
-    rowObject = {
-      latitude: properties[0],
-      longitude: properties[1],
-      ponto: properties[2],
-      c2: properties[3],
-      c3: properties[4],
-      c4: properties[5],
-      c5: properties[6]
-    }
-    dataArray.push(rowObject)
-  })
+    rows.forEach((row, index) => {
+      properties = row.split(',')
+      rowObject = {
+        latitude: properties[0],
+        longitude: properties[1],
+        ponto: properties[2] != null ? properties[2] : index,
+        c2: properties[3],
+        c3: properties[4] != null ? properties[4] : 0,
+        c4: properties[5] != null ? properties[5] : 0,
+        c5: properties[6] != null ? properties[6] : 0
+      }
+      dataArray.push(rowObject)
+    })
+  }
+
   let latitudes = []
   let longitudes = []
   dataArray.forEach(element => {
@@ -152,19 +171,26 @@ module.exports.arrayToImage = async (req, res) => {
     }
   }
 
-  const objectToString = objects => {
+  if (outputFormat == 'image') {
+    // TODO: verificar como fazer retornar uma imagem
+    //res.set('Content-Type', 'image/png')
+    //res.attachment(path.join(__dirname, 'original.png'))
+    // res.attachment(path.join(__dirname, 'retificada.png'))
+    // res.set('Content-Type', 'image/png')
+    // res.setHeader('Content-disposition', 'attachment; filename=retificada.png')
+    // res.end()
+    res.set('Content-Type', 'image/png')
+    return res.sendFile(path.join(__dirname, '../public/', 'original.png'))
+  } else if (outputFormat == 'object') {
+    return ReS(res, dataArray, 200)
+  } else {
     let csv = ''
-    for (let index = 0; index < objects.length; index++) {
-      const object = objects[index]
+    for (let index = 0; index < dataArray.length; index++) {
+      const object = dataArray[index]
       csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5}\n`
     }
     res.setHeader('Content-disposition', 'attachment; filename=testing.csv')
     res.set('Content-Type', 'text/csv')
     return res.status(200).send(csv)
-  }
-  if (zmDataFormat == 'csv') {
-    objectToString(dataArray)
-  } else {
-    return ReS(res, dataArray, 200)
   }
 }

@@ -1,9 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
-const retificationController  = require('../controllers/RetificationController')
+const retificationController = require('../controllers/RetificationController')
 
-
-router.post('/retify', retificationController.arrayToImage)
+router.post('/retify', retificationController.retify)
 
 module.exports = router
