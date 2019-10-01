@@ -180,7 +180,7 @@ module.exports.retify = async (req, res) => {
     // res.setHeader('Content-disposition', 'attachment; filename=retificada.png')
     // res.end()
     res.set('Content-Type', 'image/png')
-    return res.sendFile(path.join(__dirname, '../public/', 'original.png'))
+    return res.sendFile(path.join(__dirname, '../public/', 'retificadac2.png'))
   } else if (outputFormat == 'object') {
     return ReS(res, dataArray, 200)
   } else {
