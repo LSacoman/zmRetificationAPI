@@ -1,4 +1,5 @@
-const { to, ReE, ReS } = require('../services/util.service')
+const { to, ReE, ReS, SendCSV, SendImage } = require('../services/util.service')
+const { ParseObject, ParseString, ParseCSV } = require('../services/input.service')
 const os = require('os')
 var path = require('path')
 
@@ -31,35 +32,11 @@ module.exports.retify = async (req, res) => {
   dataArray = []
 
   if (datasetFormat == 'object') {
-    var objects = JSON.parse(data)
-    objects.forEach((object, index) => {
-      rowObject = {
-        latitude: object.coordinates[0],
-        longitude: object.coordinates[1],
-        ponto: index,
-        c2: object.data,
-        c3: object.data2 != null ? object.data2 : 0,
-        c4: object.data3 != null ? object.data3 : 0,
-        c5: object.data4 != null ? object.data4 : 0
-      }
-      dataArray.push(rowObject)
-    })
+    dataArray = ParseObject(data)
+  } else if (datasetFormat == 'string') {
+    dataArray = ParseString(data)
   } else {
-    rows = datasetFormat == 'string' ? data.split(';') : data.split('\n')
-
-    rows.forEach((row, index) => {
-      properties = row.split(',')
-      rowObject = {
-        latitude: properties[0],
-        longitude: properties[1],
-        ponto: properties[2] != null ? properties[2] : index,
-        c2: properties[3],
-        c3: properties[4] != null ? properties[4] : 0,
-        c4: properties[5] != null ? properties[5] : 0,
-        c5: properties[6] != null ? properties[6] : 0
-      }
-      dataArray.push(rowObject)
-    })
+    dataArray = ParseCSV(data)
   }
 
   let latitudes = []
@@ -78,19 +55,8 @@ module.exports.retify = async (req, res) => {
   const latitudesLength = distinctLatitudes.length
   const longitudesLength = distinctLongitudes.length
 
-  let matrixC2 = Matrix({
-    rows: latitudesLength,
-    columns: longitudesLength
-  })
-  let matrixC3 = Matrix({
-    rows: latitudesLength,
-    columns: longitudesLength
-  })
-  let matrixC4 = Matrix({
-    rows: latitudesLength,
-    columns: longitudesLength
-  })
-  let matrixC5 = Matrix({
+  let matrixC2, matrixC3, matrixC4, matrixC5
+  matrixC2 = matrixC3 = matrixC4 = matrixC5 = Matrix({
     rows: latitudesLength,
     columns: longitudesLength
   })
@@ -172,25 +138,10 @@ module.exports.retify = async (req, res) => {
   }
 
   if (outputFormat == 'image') {
-    // TODO: verificar como fazer retornar uma imagem
-    //res.set('Content-Type', 'image/png')
-    //res.attachment(path.join(__dirname, 'original.png'))
-    // res.attachment(path.join(__dirname, 'retificada.png'))
-    // res.set('Content-Type', 'image/png')
-    // res.setHeader('Content-disposition', 'attachment; filename=retificada.png')
-    // res.end()
-    res.set('Content-Type', 'image/png')
-    return res.sendFile(path.join(__dirname, '../public/', 'retificadac2.png'))
+    return SendImage(res, path.join(__dirname, '../public/', 'retificadac2.png'))
   } else if (outputFormat == 'object') {
     return ReS(res, dataArray, 200)
   } else {
-    let csv = ''
-    for (let index = 0; index < dataArray.length; index++) {
-      const object = dataArray[index]
-      csv += `${object.latitude}, ${object.longitude}, ${object.ponto}, ${object.c2}, ${object.c3}, ${object.c4}, ${object.c5}\n`
-    }
-    res.setHeader('Content-disposition', 'attachment; filename=testing.csv')
-    res.set('Content-Type', 'text/csv')
-    return res.status(200).send(csv)
+    return SendCSV(res, dataArray)
   }
 }
