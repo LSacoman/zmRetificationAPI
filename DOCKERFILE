@@ -3,6 +3,8 @@ FROM python:latest
 RUN apt update
 RUN apt install -y sudo
 RUN apt install -y python3-opencv python3-matplotlib
+RUN pip install numpy
+RUN pip install opencv-python
 
 RUN apt install -y curl software-properties-common
 RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -

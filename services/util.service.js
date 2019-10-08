@@ -37,13 +37,6 @@ module.exports.SendCSV = (res, objects) => {
 }
 
 module.exports.SendImage = (res, fullPath) => {
-  // TODO: verificar como fazer retornar uma imagem
-  //res.set('Content-Type', 'image/png')
-  //res.attachment(path.join(__dirname, 'original.png'))
-  // res.attachment(path.join(__dirname, 'retificada.png'))
-  // res.set('Content-Type', 'image/png')
-  // res.setHeader('Content-disposition', 'attachment; filename=retificada.png')
-  // res.end()
   res.set('Content-Type', 'image/png')
   return res.sendFile(fullPath)
 }
