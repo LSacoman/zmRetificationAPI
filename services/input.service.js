@@ -39,6 +39,7 @@ module.exports.ParseCSV = data => {
   let dataArray = []
   rows = data.split('\n')
 
+  rows.pop()
   rows.forEach((row, index) => {
     properties = row.split(',')
     rowObject = {

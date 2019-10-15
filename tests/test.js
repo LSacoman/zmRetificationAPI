@@ -1,5 +1,6 @@
 ;(async () => {
   const axios = require('axios')
+  const quality = require('./quality')
   // Make a request for a user with a given ID
   let url = 'http://18.229.147.63:5000/retify'
 
@@ -58,6 +59,7 @@
 
           console.log(`method: ${method}, KernelSize: ${kernelSize}, KernelFormat: ${kernelFormat}, Iterations ${iteration}`)
           console.log('Time elapsed:', (new Date().getTime() - start_time) / 1000)
+          quality.ZMquality(result.data)
         }
       }
     }
