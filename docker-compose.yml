@@ -1,5 +1,4 @@
 version: '3.7'
-
 services:
   # Container portainer
   portainer:
@@ -18,7 +17,6 @@ services:
     build:
       context: ./
       dockerfile: dockerfile
-    container_name: tccapi
     working_dir: /home/node/app/tcc
     stdin_open: true
     environment:
@@ -26,10 +24,36 @@ services:
     volumes:
       - tccapidata:/home/node/app
     ports:
-      - '5000:3000'
+      - 3000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 100M
     command: 'npm start'
     restart: always
-
+  postgres:
+    image: mdillon/postgis:9.6
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=tccleonardo
+    ports:
+      - 5432:5432
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=leonardodentz@hotmail.com
+      - PGADMIN_DEFAULT_PASSWORD=Rippax06128
+    ports:
+      - 15432:80
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - tccapi
+    ports:
+      - '80:80'
 volumes:
   tccapidata:
   portainerdata:

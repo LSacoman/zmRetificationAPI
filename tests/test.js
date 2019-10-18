@@ -1,15 +1,15 @@
-;(async () => {
-  const axios = require('axios')
-  const quality = require('./quality')
+(async () => {
+  const axios = require('axios');
+  const quality = require('./quality');
   // Make a request for a user with a given ID
-  let url = 'http://18.229.147.63:5000/retify'
+  let url = 'http://18.229.147.63:80/retify';
 
-  let methods = ['median', 'open', 'close', 'openandclose']
-  let kernelSizes = [3, 5, 7, 11]
-  let kernelFormats = ['cross', 'ellipse', 'rect']
-  let iterations = [1, 2, 3, 4]
-  let datasetFormat = 'csv'
-  let outputFormat = 'csv'
+  let methods = ['median', 'open', 'close', 'openandclose'];
+  let kernelSizes = [3, 5, 7, 11];
+  let kernelFormats = ['cross', 'ellipse', 'rect'];
+  let iterations = [1, 2, 3, 4];
+  let datasetFormat = 'csv';
+  let outputFormat = 'csv';
 
   let dataset = `801110,7186477,1,0,0,3
   801115,7186477,1,0,0,3
@@ -8239,17 +8239,17 @@
   801480,7187282,1,0,3,1
   801485,7187282,1,0,3,1
   801470,7187287,1,0,3,1
-  801475,7187287,1,0,3,1`
+  801475,7187287,1,0,3,1`;
 
   for (let i = 0; i < methods.length; i++) {
-    const method = methods[i]
+    const method = methods[i];
     for (let j = 0; j < kernelSizes.length; j++) {
-      const kernelSize = kernelSizes[j]
+      const kernelSize = kernelSizes[j];
       for (let k = 0; k < kernelFormats.length; k++) {
-        const kernelFormat = kernelFormats[k]
+        const kernelFormat = kernelFormats[k];
         for (let w = 0; w < iterations.length; w++) {
-          const iteration = iterations[w]
-          let start_time = new Date().getTime()
+          const iteration = iterations[w];
+          let start_time = new Date().getTime();
           let result = await axios.post(url, {
             method,
             kernelSize,
@@ -8258,13 +8258,40 @@
             datasetFormat,
             dataset,
             outputFormat
-          })
+          });
+          let result1 = await axios.post(url, {
+            method,
+            kernelSize,
+            kernelFormat,
+            iterations: iteration,
+            datasetFormat,
+            dataset,
+            outputFormat
+          });
+          let result2 = await axios.post(url, {
+            method,
+            kernelSize,
+            kernelFormat,
+            iterations: iteration,
+            datasetFormat,
+            dataset,
+            outputFormat
+          });
+          let result3 = await axios.post(url, {
+            method,
+            kernelSize,
+            kernelFormat,
+            iterations: iteration,
+            datasetFormat,
+            dataset,
+            outputFormat
+          });
 
-          console.log(`method: ${method}, KernelSize: ${kernelSize}, KernelFormat: ${kernelFormat}, Iterations ${iteration}`)
-          console.log('Time elapsed:', (new Date().getTime() - start_time) / 1000)
-          quality.ZMquality(result.data)
+          console.log(`method: ${method}, KernelSize: ${kernelSize}, KernelFormat: ${kernelFormat}, Iterations ${iteration}`);
+          console.log('Time elapsed:', (new Date().getTime() - start_time) / 1000);
+          //quality.ZMquality(result.data);
         }
       }
     }
   }
-})()
+})();
