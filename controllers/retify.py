@@ -47,7 +47,7 @@ if method == 'openandclose':
 	result = cv2.erode(resultc, kernel, iterations = int(iterations))	
 
 
-cv2.imwrite('../public/retificada-' + method + '-' + kernelsize + '-' + kernelFormat + '-' + iterations + '-' + identifier + '.png', result)
+cv2.imwrite('../public/retificada_' + method + '_' + kernelSize + '_' + kernelFormat + '_' + iterations + '_' + identifier + '.png', result)
 #cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
 #cv2.imshow('Imagem Original', data2)
 #cv2.namedWindow('Imagem Retificada', cv2.WINDOW_NORMAL)
