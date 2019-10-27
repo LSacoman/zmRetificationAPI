@@ -39,7 +39,7 @@ if method == 'open':
 	result = cv2.dilate(resulta, kernel, iterations = int(iterations))
 if method == 'close':
 	resulta = cv2.dilate(data2, kernel, iterations = int(iterations))
-	resulta = cv2.erode(result, kernel, iterations = int(iterations))	
+	result = cv2.erode(resulta, kernel, iterations = int(iterations))	
 if method == 'openandclose':
 	resulta = cv2.erode(data2, kernel, iterations = int(iterations))
 	resultb = cv2.dilate(resulta, kernel, iterations = int(iterations))

@@ -31,7 +31,7 @@ module.exports.ZMquality = data => {
     for (let long = 0; long < longitudesLength; long++) {
       for (let index = 0; index < dataArray.length; index++) {
         if (dataArray[index].latitude == distinctLatitudes[lat] && dataArray[index].longitude == distinctLongitudes[long]) {
-          matrixC2[lat][long] = parseInt(dataArray[index].c3) + 1;
+          matrixC2[lat][long] = parseInt(dataArray[index].c4) + 1;
         }
       }
     }
@@ -166,5 +166,5 @@ module.exports.ZMquality = data => {
     mudancadiagonalDireita / (4 * possibilidadesDiagonalDireita))//447,700
      * 100;
 
-  console.log(`Indece de suavidade: ${indice_de_suavidade}`);
+  console.log(`Indice de suavidade: ${indice_de_suavidade}`);
 };

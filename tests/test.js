@@ -2,7 +2,7 @@
   const axios = require('axios');
   const quality = require('./quality');
   // Make a request for a user with a given ID
-  let url = 'http://18.229.147.63:80/retify';
+  let url = 'http://18.229.147.63:5000/retify';
 
   let methods = ['median', 'open', 'close', 'openandclose'];
   let kernelSizes = [3, 5, 7, 9, 11];
@@ -3788,33 +3788,33 @@
             dataset,
             outputFormat
           });
-          let result1 = await axios.post(url, {
-            method,
-            kernelSize,
-            kernelFormat,
-            iterations: iteration,
-            datasetFormat,
-            dataset,
-            outputFormat
-          });
-          let result2 = await axios.post(url, {
-            method,
-            kernelSize,
-            kernelFormat,
-            iterations: iteration,
-            datasetFormat,
-            dataset,
-            outputFormat
-          });
-          let result3 = await axios.post(url, {
-            method,
-            kernelSize,
-            kernelFormat,
-            iterations: iteration,
-            datasetFormat,
-            dataset,
-            outputFormat
-          });
+          // let result1 = await axios.post(url, {
+          //   method,
+          //   kernelSize,
+          //   kernelFormat,
+          //   iterations: iteration,
+          //   datasetFormat,
+          //   dataset,
+          //   outputFormat
+          // });
+          // let result2 = await axios.post(url, {
+          //   method,
+          //   kernelSize,
+          //   kernelFormat,
+          //   iterations: iteration,
+          //   datasetFormat,
+          //   dataset,
+          //   outputFormat
+          // });
+          // let result3 = await axios.post(url, {
+          //   method,
+          //   kernelSize,
+          //   kernelFormat,
+          //   iterations: iteration,
+          //   datasetFormat,
+          //   dataset,
+          //   outputFormat
+          // });
 
           console.log(`method: ${method}, KernelSize: ${kernelSize}, KernelFormat: ${kernelFormat}, Iterations ${iteration}`);
           console.log('Time elapsed:', (new Date().getTime() - start_time) / 1000);
