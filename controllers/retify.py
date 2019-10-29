@@ -47,6 +47,15 @@ if method == 'openandclose':
 	result = cv2.erode(resultc, kernel, iterations = int(iterations))	
 
 
+(h, w) = result.shape[:2]
+# calculate the center of the image
+center = (w / 2, h / 2)
+ 
+# Perform the counter clockwise rotation holding at the center
+# 90 degrees
+M = cv2.getRotationMatrix2D(center, 90, 1.0)
+result = cv2.warpAffine(result, M, (h, w))
+
 cv2.imwrite('../public/retificada_' + method + '_' + kernelSize + '_' + kernelFormat + '_' + iterations + '_' + identifier + '.png', result)
 #cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
 #cv2.imshow('Imagem Original', data2)
