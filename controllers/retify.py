@@ -21,6 +21,11 @@ for row in dataRows:
 	
 data2 = 50 * np.array(formatedData, dtype=np.uint8)
 
+(h, w) = data2.shape[:2]
+center = (w / 2, h / 2)
+M = cv2.getRotationMatrix2D(center, 90, 1.0)
+data2 = cv2.warpAffine(data2, M, (h, w))
+
 cv2.imwrite('../public/original' + identifier + '.png', data2)
 
 if kernelFormat == 'rect':
@@ -46,14 +51,7 @@ if method == 'openandclose':
 	resultc = cv2.dilate(resultb, kernel, iterations = int(iterations))
 	result = cv2.erode(resultc, kernel, iterations = int(iterations))	
 
-(h, w) = result.shape[:2]
-# calculate the center of the image
-center = (w / 2, h / 2)
- 
-# Perform the counter clockwise rotation holding at the center
-# 90 degrees
-M = cv2.getRotationMatrix2D(center, 90, 1.0)
-result = cv2.warpAffine(result, M, (h, w))
+
 
 cv2.imwrite('../public/retificada_' + method + '_' + kernelSize + '_' + kernelFormat + '_' + iterations + '_' + identifier + '.png', result)
 #cv2.namedWindow('Imagem Original', cv2.WINDOW_NORMAL)
