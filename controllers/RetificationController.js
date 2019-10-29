@@ -59,20 +59,20 @@ module.exports.retify = async (req, res) => {
   console.log(longitudesLength);
 
   let matrixC2 = Matrix({
-    rows: longitudesLength,
-    columns: latitudesLength
+    rows: latitudesLength,
+    columns: longitudesLength
   });
   let matrixC3 = Matrix({
-    rows: longitudesLength,
-    columns: latitudesLength
+    rows: latitudesLength,
+    columns: longitudesLength
   });
   let matrixC4 = Matrix({
-    rows: longitudesLength,
-    columns: latitudesLength
+    rows: latitudesLength,
+    columns: longitudesLength
   });
   let matrixC5 = Matrix({
-    rows: longitudesLength,
-    columns: latitudesLength
+    rows: latitudesLength,
+    columns: longitudesLength
   });
 
   // Popula as Matrizes com os valores corretos nas posicoes corretas
@@ -81,10 +81,10 @@ module.exports.retify = async (req, res) => {
       for (let index = 0; index < dataArray.length; index++) {
         const element = dataArray[index];
         if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
-          matrixC2[long][lat] = parseInt(element.c2);
-          matrixC3[long][lat] = parseInt(element.c3);
-          matrixC4[long][lat] = parseInt(element.c4);
-          matrixC5[long][lat] = parseInt(element.c5);
+          matrixC2[lat][long] = parseInt(element.c2);
+          matrixC3[lat][long] = parseInt(element.c3);
+          matrixC4[lat][long] = parseInt(element.c4);
+          matrixC5[lat][long] = parseInt(element.c5);
         }
       }
     }
@@ -142,10 +142,10 @@ module.exports.retify = async (req, res) => {
       for (let index = 0; index < dataArray.length; index++) {
         const element = dataArray[index];
         if (element.latitude == distinctLatitudes[lat] && element.longitude == distinctLongitudes[long]) {
-          dataArray[index].c2 = Math.round(matrixRetornoC2[long][lat] / 50);
-          dataArray[index].c3 = Math.round(matrixRetornoC3[long][lat] / 50);
-          dataArray[index].c4 = Math.round(matrixRetornoC4[long][lat] / 50);
-          dataArray[index].c5 = Math.round(matrixRetornoC5[long][lat] / 50);
+          dataArray[index].c2 = Math.round(matrixRetornoC2[lat][long] / 50);
+          dataArray[index].c3 = Math.round(matrixRetornoC3[lat][long] / 50);
+          dataArray[index].c4 = Math.round(matrixRetornoC4[lat][long] / 50);
+          dataArray[index].c5 = Math.round(matrixRetornoC5[lat][long] / 50);
         }
       }
     }

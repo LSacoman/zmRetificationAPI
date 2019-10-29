@@ -46,7 +46,6 @@ if method == 'openandclose':
 	resultc = cv2.dilate(resultb, kernel, iterations = int(iterations))
 	result = cv2.erode(resultc, kernel, iterations = int(iterations))	
 
-
 (h, w) = result.shape[:2]
 # calculate the center of the image
 center = (w / 2, h / 2)
